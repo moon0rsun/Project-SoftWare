@@ -3,5 +3,6 @@
 
 ## contributors
 <a href="https://github.com/SeaSealji/Project-SoftWare/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=SeaSealji/Project-SoftWare" />
+ <img src="https://contrib.rocks/image?repo=tianshuking/Project-SoftWare" />
+  
 </a>
