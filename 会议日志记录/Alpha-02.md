@@ -3,7 +3,9 @@
 ## 一、基本情况
 
 - **团队ID**：04
-- **组长博客和小组GitHub地址**：[SeaSealji/Project-SoftWare: 这是一个用于进行中国海洋大学软件工程原理与实践的课程作业仓库。](https://github.com/SeaSealji/Project-SoftWare)
+- **组长博客和小组GitHub地址**：
+- 博客：https://blog.csdn.net/m0_73965132?spm=1010.2135.3001.5343
+- GitHub：[SeaSealji/Project-SoftWare: 这是一个用于进行中国海洋大学软件工程原理与实践的课程作业仓库。](https://github.com/SeaSealji/Project-SoftWare)
 - **小组成员**：刘海涵、刘奕鹏、吕茂宁
 
 ## 二、冲刺概况汇报
