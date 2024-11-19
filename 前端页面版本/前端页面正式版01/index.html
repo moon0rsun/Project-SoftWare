@@ -82,6 +82,7 @@
         </div>
     </section>
     <!-- 结果展示区域 -->
+    <!-- 结果展示区域 -->
     <section id="three" class="main style3">
         <div class="container">
             <header class="major">
@@ -89,7 +90,10 @@
             </header>
             <div class="row gtr-uniform">
                 <div class="col-12">
-                    <span class="image fit"><img id="resultImage" src="" alt="对比结果" /></span>
+                    <span class="image fit" id="resultContainer">
+                    <img id="resultImage" src="" alt="对比结果" style="display:none;" />
+                    <div id="loadingSpinner" style="display:none;">Loading...</div>
+                </span>
                 </div>
             </div>
         </div>
@@ -114,21 +118,6 @@
     <script src="assets/js/util.js"></script>
     <script src="assets/js/main.js"></script>
     <script src="assets/js/imageUpload.js"></script>
-    <script>
-        $(function() {
-            $('#compareButton').click(function(event) {
-                event.preventDefault();
-                alert('图像对比结果将在这里显示。');
-                // 这里可以添加图像对比的逻辑和结果显示
-                <
-                img id = "resultImage"
-                src = ""
-                alt = "结果图像"
-                style = "display:none;" / >
-
-            });
-        });
-    </script>
 
 </body>
 

@@ -2944,6 +2944,16 @@ body.is-preload #header:after {
 }
 
 
+/* 加载动画样式 */
+
+#loadingSpinner {
+    font-size: 2em;
+    font-weight: bold;
+    text-align: center;
+    padding: 20px;
+}
+
+
 /* Footer */
 
 #footer {
