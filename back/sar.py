@@ -1,15 +1,17 @@
-from flask import Flask, request, jsonify, send_from_directory, render_template
+from flask import Flask, request, jsonify, send_file, render_template
 import os
 import cv2
 import numpy as np
 from werkzeug.utils import secure_filename
+from flask import send_from_directory
+from flask import after_this_request
 
 # Flask应用初始化
 app = Flask(__name__)
 
 # 配置文件夹路径
-UPLOAD_FOLDER = 'uploads'
-RESULT_FOLDER = 'results'
+UPLOAD_FOLDER = 'back/uploads' 
+RESULT_FOLDER = 'back/results' 
 HTML_FOLDER = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '前端页面版本/前端页面正式版01'))  # 上层目录中的HTML文件夹
 STATIC_FOLDER = os.path.join(HTML_FOLDER, 'assets')  # 静态资源文件夹
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'tif'}
@@ -26,24 +28,31 @@ def allowed_file(filename):
 
 # 图像变化检测算法
 def detect_changes(image1_path, image2_path):
-    # 读取两幅图像
-    img1 = cv2.imread(image1_path, 0)  # 读取为灰度图
+    # 读取图像
+    img1 = cv2.imread(image1_path, 0)
     img2 = cv2.imread(image2_path, 0)
 
-    # 图像预处理（如去噪、归一化）
-    img1 = cv2.GaussianBlur(img1, (5, 5), 0)
-    img2 = cv2.GaussianBlur(img2, (5, 5), 0)
+    
+    if img1.shape != img2.shape:
+        raise ValueError("输入图像大小不一致，请检查上传的图像！")
 
-    # 计算图像的绝对差异
+    # 打印图像统计信息
+    print("Image1 mean:", np.mean(img1), "stddev:", np.std(img1))
+    print("Image2 mean:", np.mean(img2), "stddev:", np.std(img2))
+
+    # 计算差异
     diff = cv2.absdiff(img1, img2)
+    print("Difference mean:", np.mean(diff), "max:", np.max(diff), "min:", np.min(diff))
 
-    # 对差异图像进行二值化
-    _, thresholded = cv2.threshold(diff, 50, 255, cv2.THRESH_BINARY)
+    # 二值化
+    _, thresholded = cv2.threshold(diff, 30, 255, cv2.THRESH_BINARY)
 
-    # 保存结果图像
+    # 保存结果
     result_path = os.path.join(app.config['RESULT_FOLDER'], 'result.png')
     cv2.imwrite(result_path, thresholded)
-    return result_path
+    print("Result saved at:", result_path)
+
+    return os.path.abspath(result_path) 
 
 # API路由：上传图像并检测变化
 @app.route('/upload', methods=['POST'])
@@ -68,17 +77,13 @@ def upload_file():
 
         # 执行图像变化检测
         result_path = detect_changes(filepath1, filepath2)
-
-        # 返回检测结果
-        return jsonify({'result': f'/results/{os.path.basename(result_path)}'}), 200
+        print(result_path)
+        
+        # 直接返回结果图像
+        return send_file(result_path, mimetype='image/png')
     else:
         return jsonify({'error': '文件类型不支持！'}), 400
-
-# 静态文件路由：返回检测结果图像
-@app.route('/results/<filename>', methods=['GET'])
-def get_result(filename):
-    return send_from_directory(app.config['RESULT_FOLDER'], filename)
-
+    
 # 静态文件路由：返回静态资源文件
 @app.route('/assets/<path:filename>', methods=['GET'])
 def serve_static(filename):
@@ -92,3 +97,4 @@ def serve_index():
 # 启动服务
 if __name__ == '__main__':
     app.run(debug=True)
+
