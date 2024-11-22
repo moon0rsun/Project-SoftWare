@@ -20,7 +20,7 @@
 
   在之前的基础下，继续进行前端的优化，解决目前出现的一些问题，并进行模型的训练和优化
 
-- **GitHub签入记录**：![alt text](../images/lhhweek3.jpg)
+- **GitHub签入记录**：![alt text](../images/lhhweek3.png)
   
 - **接下来的计划**：
 
@@ -46,7 +46,7 @@
 
   更深入地了解了模型结构，首先练习并进行模型优化，学习相关算法
 
-- **GitHub签入记录**：![alt text](../images/lypweek3.jpg)
+- **GitHub签入记录**：![alt text](../images/lypweek3.png)
 
 - **接下来的计划**：
   - 深化对适合此任务的算法模型的分析，准备算法实现。
@@ -69,7 +69,7 @@
 
 - **文字描述**：继续完善后端的代码，将前后端结合完成，实现了预定的功能，并继续进行模型的修改。
 
-- **GitHub签入记录**：![alt text](../images/lmnweek3.jpg)
+- **GitHub签入记录**：![alt text](../images/lmnweek3.png)
 
   
 
