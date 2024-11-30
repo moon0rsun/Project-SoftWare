@@ -58,12 +58,12 @@
                         <input type="file" name="image2" id="image2" placeholder="选择第二幅图像" />
                     </div>
                     <div class="col-12">
-                        <!-- 
-							 <ul class="actions">
-									<li><input type="submit" value="上传图像" class="primary" /></li>
-								</ul>
-								-->
-                    </div>
+                    <label for="modelSelect">选择模型:</label>
+                    <select name="model" id="modelSelect">
+                    <option value="optical">光学识别（时间短）</option>
+                    <option value="sar">SAR图像识别（时间长）</option>
+                     </select>
+                     </div>
                 </div>
             </form>
             <div class="row">
