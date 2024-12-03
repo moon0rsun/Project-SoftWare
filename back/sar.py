@@ -4,7 +4,6 @@ import cv2
 import numpy as np
 from werkzeug.utils import secure_filename
 from flask import send_from_directory
-from flask import after_this_request
 
 # Flask应用初始化
 app = Flask(__name__)
@@ -26,13 +25,12 @@ os.makedirs(RESULT_FOLDER, exist_ok=True)
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-# 图像变化检测算法
-def detect_changes(image1_path, image2_path):
+# 图像变化检测算法（光学识别模型）
+def detect_changes_optical(image1_path, image2_path):
     # 读取图像
     img1 = cv2.imread(image1_path, 0)
     img2 = cv2.imread(image2_path, 0)
 
-    
     if img1.shape != img2.shape:
         raise ValueError("输入图像大小不一致，请检查上传的图像！")
 
@@ -52,11 +50,19 @@ def detect_changes(image1_path, image2_path):
     cv2.imwrite(result_path, thresholded)
     print("Result saved at:", result_path)
 
-    return os.path.abspath(result_path) 
+    return os.path.abspath(result_path)
 
-# API路由：上传图像并检测变化
+# SAR模型（暂时保留空白部分以便修改）
+def detect_changes_sar(image1_path, image2_path):
+    # 暂时保留空白，等你修改实现SAR模型
+    print("SAR模型待实现。请修改此部分代码。")
+    return None  # 返回None或者保留一个标志，指示SAR模型未实现
+
 @app.route('/upload', methods=['POST'])
 def upload_file():
+    # 获取选择的模型类型
+    model_type = request.form.get('model', '').lower()  # 获取前端的 'model' 键值
+
     # 检查是否有图像上传
     if 'image1' not in request.files or 'image2' not in request.files:
         return jsonify({'error': '请上传两幅图像文件！'}), 400
@@ -75,14 +81,21 @@ def upload_file():
         file1.save(filepath1)
         file2.save(filepath2)
 
-        # 执行图像变化检测
-        result_path = detect_changes(filepath1, filepath2)
-        print(result_path)
+        # 根据选择的模型类型执行不同的处理
+        if model_type == 'optical':
+            # 执行光学识别模型
+            result_path = detect_changes_optical(filepath1, filepath2)
+        elif model_type == 'sar':
+            # 执行SAR模型（目前为空白，等待修改）
+            result_path = detect_changes_sar(filepath1, filepath2)
+        else:
+            return jsonify({'error': '不支持的模型类型！'}), 400
         
-        # 直接返回结果图像
+        # 返回结果图像
         return send_file(result_path, mimetype='image/png')
     else:
         return jsonify({'error': '文件类型不支持！'}), 400
+
     
 # 静态文件路由：返回静态资源文件
 @app.route('/assets/<path:filename>', methods=['GET'])
@@ -97,4 +110,3 @@ def serve_index():
 # 启动服务
 if __name__ == '__main__':
     app.run(debug=True)
-
