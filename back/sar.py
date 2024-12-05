@@ -4,6 +4,7 @@ import cv2
 import numpy as np
 from werkzeug.utils import secure_filename
 from flask import send_from_directory
+from model import change_detection
 
 # Flask应用初始化
 app = Flask(__name__)
@@ -87,7 +88,7 @@ def upload_file():
             result_path = detect_changes_optical(filepath1, filepath2)
         elif model_type == 'sar':
             # 执行SAR模型（目前为空白，等待修改）
-            result_path = detect_changes_sar(filepath1, filepath2)
+            result_path = change_detection(filepath1, filepath2)
         else:
             return jsonify({'error': '不支持的模型类型！'}), 400
         
