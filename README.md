@@ -7,13 +7,13 @@
 该项目是一个基于Flask框架的Web应用程序，用于实现图像变化检测功能。项目包含前端页面和后端服务两部分。
 
 ### 前端页面
-前端页面位于/SeaSealji/Project-SoftWare/前端页面版本/前端页面正式版01目录下，主要包含以下文件：
+前端页面位于/Project-SoftWare/前端页面版本/前端页面正式版01目录下，主要包含以下文件：
 
 - index.html：主页面，包含图像上传和显示结果的区域。
 - assets/css/：包含CSS样式文件。
 - assets/js/：包含JavaScript文件，用于处理页面交互和调用后端API。
 ### 后端服务
-后端服务位于/SeaSealji/Project-SoftWare/back目录下，主要包含以下文件：
+后端服务位于Project-SoftWare/back目录下，主要包含以下文件：
 
 - sar.py：Flask应用的主文件，定义了API路由和主要功能。
 - model.py：包含图像变化检测算法的实现。
