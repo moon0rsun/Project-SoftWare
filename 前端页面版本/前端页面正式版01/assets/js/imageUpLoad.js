@@ -1,4 +1,3 @@
-
 document.addEventListener('DOMContentLoaded', function() {
     // 监听文件输入框的变化，实现图片预览
     document.getElementById('image1').addEventListener('change', function(event) {
@@ -37,6 +36,16 @@ document.addEventListener('DOMContentLoaded', function() {
         formData.append('image1', image1);
         formData.append('image2', image2);
         formData.append('model', modelSelect); // 添加模型选择
+        var progressBar = document.getElementById('progressBar');
+        progressBar.value = 0;
+        var interval = setInterval(function() {
+            progressBar.value = parseInt(progressBar.value) + 10;
+            if (progressBar.value >= 100) {
+                clearInterval(interval);
+            }
+        }, 1000);
+
+
         fetch('/upload', { // Flask后端的URL
                 method: 'POST',
                 body: formData
@@ -47,6 +56,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('resultImage').src = url;
                 document.getElementById('resultImage').style.display = 'block'; // 显示图片
                 document.getElementById('loadingSpinner').style.display = 'none'; // 隐藏加载动画
+                progressBar.value = 100; // 进度条完成
                 document.getElementById('three').style.display = 'block'; // 显示结果区域
             })
             .catch(error => {
