@@ -1,20 +1,11 @@
-import numpy as np
-import skimage
-from skimage import io, measure
-import random
-import scipy.io as sio
-import matplotlib
 import matplotlib.pyplot as plt
-from preclassify import del2, srad, dicomp, FCM, hcluster
+from preclassify import dicomp, hcluster
 import torch
-import torchvision
-from torchvision import transforms
 import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
 import cv2
 import os
-from collections import  Counter
 
 im1_path  = 'ottawa_1.bmp'
 im2_path  = 'ottawa_2.bmp'
