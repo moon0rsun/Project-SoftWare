@@ -1,3 +1,6 @@
+import numpy as np
+from skimage import io, measure
+import random
 import matplotlib.pyplot as plt
 from preclassify import dicomp, hcluster
 import torch
