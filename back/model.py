@@ -118,37 +118,7 @@ def postprocess(res):
     return res_new
 
 
-# read image, and then tranform to float32
-im1 = io.imread(im1_path)[:, :, 0].astype(np.float32)
-im2 = io.imread(im2_path)[:, :, 0].astype(np.float32)
 
-
-im_di = dicomp(im1, im2)
-ylen, xlen = im_di.shape
-pix_vec = im_di.reshape([ylen * xlen, 1])
-
-# hiearchical FCM clustering
-# in the preclassification map,
-# pixels with high probability to be unchanged are labeled as 1
-# pixels with high probability to be changed are labeled as 2
-# pixels with uncertainty are labeled as 1.5
-preclassify_lab = hcluster(pix_vec, im_di)
-print('... ... hiearchical clustering finished !!!')
-
-mdata = np.zeros([im1.shape[0], im1.shape[1], 3], dtype=np.float32)
-mdata[:, :, 0] = im1
-mdata[:, :, 1] = im2
-mdata[:, :, 2] = im_di
-mlabel = preclassify_lab
-
-x_train, y_train = createTrainingCubes(mdata, mlabel, patch_size)
-x_train = x_train.transpose(0, 3, 1, 2)
-print('... x train shape: ', x_train.shape)
-print('... y train shape: ', y_train.shape)
-
-x_test = createTestingCubes(mdata, patch_size)
-x_test = x_test.transpose(0, 3, 1, 2)
-print('... x test shape: ', x_test.shape)
 
 """ Training dataset"""
 
@@ -170,17 +140,6 @@ class TrainDS(torch.utils.data.Dataset):
     def __len__(self):
         # 返回文件数据的数目
         return self.len
-
-
-# 创建 trainloader 和 testloader
-trainset = TrainDS()
-# 根据操作系统选择 num_workers 参数
-if os.name == 'nt':  # Windows 系统
-    num_workers = 0
-else:  # 其他系统（如 Linux）
-    num_workers = 2
-
-train_loader = torch.utils.data.DataLoader(dataset=trainset, batch_size=128, shuffle=True, num_workers=0)
 
 
 class MRC(nn.Module):
@@ -277,63 +236,6 @@ class DDNet(nn.Module):
 
         return out
 
-    # 使用GPU训练，可以在菜单 "代码执行工具" -> "更改运行时类型" 里进行设置
-
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-istrain = True
-# 网络放到GPU上
-net = DDNet().to(device)
-criterion = nn.CrossEntropyLoss().to(device)
-optimizer = optim.Adam(net.parameters(), lr=0.001)
-net.train()
-
-# 开始训练
-total_loss = 0
-for epoch in range(50):
-    for i, (inputs, labels) in enumerate(train_loader):
-        inputs = inputs.to(device)
-        labels = labels.to(device)
-        # 优化器梯度归零
-        optimizer.zero_grad()
-        # 正向传播 +　反向传播 + 优化
-        outputs = net(inputs)
-        loss = criterion(outputs, labels)
-        loss.backward()
-        optimizer.step()
-        total_loss += loss.item()
-    print(
-        '[Epoch: %d]  [loss avg: %.4f]  [current loss: %.4f]' % (epoch + 1, total_loss / (epoch + 1), loss.item()))
-print('Finished Training')
-
-# 逐像素预测类别
-istrain = False
-net.eval()
-outputs = np.zeros((ylen, xlen))
-glo_fin = torch.Tensor([]).cuda()
-dct_fin = torch.Tensor([]).cuda()
-for i in range(ylen):
-    for j in range(xlen):
-        if preclassify_lab[i, j] != 1.5:
-            outputs[i, j] = preclassify_lab[i, j]
-        else:
-            img_patch = x_test[i * xlen + j, :, :, :]
-            img_patch = img_patch.reshape(1, img_patch.shape[0], img_patch.shape[1], img_patch.shape[2])
-            img_patch = torch.FloatTensor(img_patch).to(device)
-            prediction = net(img_patch)
-
-            prediction = np.argmax(prediction.detach().cpu().numpy(), axis=1)
-            outputs[i, j] = prediction + 1
-    if (i + 1) % 50 == 0:
-        print('... ... row', i + 1, ' handling ... ...')
-
-outputs = outputs - 1
-
-plt.imshow(outputs, 'gray')
-
-res = outputs * 255
-res = postprocess(res)
-plt.imshow(res, 'gray')
-plt.imsave('change_detection_result.png', res, cmap='gray')
 
 def change_detection(image1_path, image2_path, output_path='change_detection_result.png'):
     """
